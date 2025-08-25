@@ -24,7 +24,10 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-          VITE_BASE: /${{ github.event.repository.name }}/
+          VITE_BASE: /Centro-de-Estudios-Econ-micos/
+
+      - name: Verify build output
+        run: test -d dist && echo "Build output exists" || exit 1
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
