@@ -8,6 +8,7 @@ import CourseDetailPage from './pages/CourseDetailPage.jsx';
 import BiographyDetailPage from './pages/BiographyDetailPage.jsx';
 import BookDetailPage from './pages/BookDetailPage.jsx';
 import ScholarshipDetailPage from './pages/ScholarshipDetailPage.jsx';
+import CourseList from './components/CourseList.jsx';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/:school" element={<SchoolPage />} />
             <Route path="/:school/articles/:title" element={<ArticleDetailPage />} />
+            <Route path="/:school/courses" element={<CourseList />} />
             <Route path="/:school/courses/:course" element={<CourseDetailPage />} />
             <Route path="/:school/biographies/:author" element={<BiographyDetailPage />} />
             <Route path="/:school/books/:title" element={<BookDetailPage />} />

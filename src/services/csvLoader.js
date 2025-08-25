@@ -1,3 +1,4 @@
+// csvLoader.js (renamed to services/csvLoader.js if needed)
 import Papa from 'papaparse';
 
 const urls = {
@@ -10,7 +11,7 @@ const urls = {
   scholarships: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSJ2PvMA78hA2qu1opboquB54evwyBiDrXr-TdXXQgbFOZQDAPBRPXkvKxUX9hFyXmhlCOPV2_Izp5S/pub?gid=437444125&single=true&output=csv',
 };
 
-async function loadCSV(key, retries = 3, delay = 1000) {
+async function loadCSV(key, retries = 5, delay = 2000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const response = await fetch(urls[key], { cache: 'no-store' });
@@ -18,11 +19,13 @@ async function loadCSV(key, retries = 3, delay = 1000) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const text = await response.text();
-      console.log(`Raw CSV for ${key}:`, text.substring(0, 200)); // Log first 200 chars for debugging
+      console.log(`Raw CSV for ${key}:`, text.substring(0, 200)); // Log for debugging
       const parsed = Papa.parse(text, {
         header: true,
         skipEmptyLines: true,
         encoding: 'utf-8',
+        dynamicTyping: true, // Auto-detect types
+        transform: (value) => value.trim(), // Trim all values
       });
       if (parsed.errors.length > 0) {
         console.error(`Papa Parse errors for ${key}:`, parsed.errors);
@@ -33,7 +36,7 @@ async function loadCSV(key, retries = 3, delay = 1000) {
     } catch (error) {
       console.error(`Attempt ${attempt} failed for ${key}:`, error.message);
       if (attempt < retries) {
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise(resolve => setTimeout(resolve, delay * attempt)); // Exponential backoff
       } else {
         throw new Error(`Failed to load ${key} CSV after ${retries} attempts: ${error.message}`);
       }
