@@ -28,42 +28,22 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f1eb] text-[#3e2f2a]">
-      {/* Header */}
-      <header className="bg-[#4b3621] text-[#f5f1eb] py-10 shadow-md">
-        <div className="container mx-auto flex flex-col items-center px-6 text-center">
-          <img
-            src="/logo.png"
-            alt="Logo Centro"
-            className="w-24 h-24 mb-4 shadow-md"
-            style={{ border: "none" }}
-          />
-          <h1 className="text-4xl md:text-5xl font-serif font-bold tracking-tight mb-2">
-            Centro de Pensamiento Económico
-          </h1>
-          <p className="text-[#e0d8cf] text-lg max-w-2xl">
-            Un espacio académico y plural para explorar escuelas económicas,
-            reflexionar sobre el presente y abrir caminos hacia el futuro.
+      <main className="container mx-auto px-4 py-10">
+        {/* Quiénes somos */}
+        <section className="mb-12 max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl font-serif font-semibold mb-4">
+            Quiénes Somos
+          </h2>
+          <p className="leading-relaxed">
+            Somos un centro académico independiente, dedicado a la investigación
+            y difusión del pensamiento económico. Promovemos el diálogo crítico
+            y el análisis riguroso para enriquecer la comprensión de la sociedad
+            y sus desafíos.
           </p>
-        </div>
-      </header>
+        </section>
 
-      <main className="container mx-auto px-6 py-12">
-        /* Quiénes somos */
-          <section className="mb-16 text-center max-w-3xl mx-auto">
-            <h2 className="text-2xl font-serif font-semibold mb-4">
-              Quiénes Somos
-            </h2>
-            <p className="leading-relaxed">
-              Somos un centro académico independiente, dedicado a la investigación
-              y la difusión del pensamiento económico en sus diversas corrientes.
-              Nuestro objetivo es promover el diálogo crítico y el análisis
-              riguroso para enriquecer la comprensión de la sociedad y sus
-              desafíos.
-            </p>
-          </section>
-
-          {/* Escuelas */}
-        <section className="mb-16">
+        {/* Escuelas */}
+        <section className="mb-12">
           <h2 className="text-2xl font-serif font-semibold mb-6 border-b border-[#8c6a4c] pb-2">
             Escuelas Económicas
           </h2>
@@ -75,7 +55,7 @@ const Home = () => {
         </section>
 
         {/* Artículos */}
-        <section className="mb-16">
+        <section className="mb-12">
           <h2 className="text-2xl font-serif font-semibold mb-6 border-b border-[#8c6a4c] pb-2">
             Muestras de Artículos
           </h2>
@@ -91,8 +71,8 @@ const Home = () => {
         </section>
 
         {/* Newsletter */}
-        <section className="mb-16 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-serif font-semibold mb-6 border-b border-[#8c6a4c] pb-2">
+        <section className="mb-12 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-serif font-semibold mb-4 border-b border-[#8c6a4c] pb-2">
             Suscríbete a Nuestra Newsletter
           </h2>
           <p className="mb-4">
@@ -103,8 +83,8 @@ const Home = () => {
         </section>
 
         {/* Subir artículo */}
-        <section className="mb-16 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-serif font-semibold mb-6 border-b border-[#8c6a4c] pb-2">
+        <section className="mb-12 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-serif font-semibold mb-4 border-b border-[#8c6a4c] pb-2">
             Envío de Artículos para Revisión
           </h2>
           <p className="mb-4">
@@ -138,11 +118,9 @@ const Home = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#4b3621] text-[#f5f1eb] py-8 text-center">
-        <p className="text-sm">
-          © {new Date().getFullYear()} Centro de Pensamiento Económico. Todos
-          los derechos reservados.
-        </p>
+      <footer className="bg-[#4b3621] text-[#f5e6c2] py-6 text-center text-sm">
+        © {new Date().getFullYear()} Centro de Pensamiento Económico. Todos
+        los derechos reservados.
       </footer>
     </div>
   );
