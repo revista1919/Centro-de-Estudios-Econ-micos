@@ -36,7 +36,7 @@ const Home = () => {
           </h2>
           <p className="leading-relaxed">
             Somos un centro académico independiente, dedicado a la investigación
-            y difusión del pensamiento económico. Promovemos el diálogo crítico
+            y difusión de la economía. Promovemos el diálogo crítico
             y el análisis riguroso para enriquecer la comprensión de la sociedad
             y sus desafíos.
           </p>
@@ -73,11 +73,11 @@ const Home = () => {
         {/* Newsletter */}
         <section className="mb-12 max-w-2xl mx-auto">
           <h2 className="text-2xl font-serif font-semibold mb-4 border-b border-[#8c6a4c] pb-2">
-            Suscríbete a Nuestra Newsletter
+            Suscríbete a Nuestro Newsletter
           </h2>
           <p className="mb-4">
             Recibe actualizaciones, reflexiones académicas y noticias sobre
-            pensamiento económico directamente en tu correo.
+            economía directamente en tu correo.
           </p>
           <NewsletterForm />
         </section>
@@ -117,11 +117,7 @@ const Home = () => {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#4b3621] text-[#f5e6c2] py-6 text-center text-sm">
-        © {new Date().getFullYear()} Centro de Pensamiento Económico. Todos
-        los derechos reservados.
-      </footer>
+    
     </div>
   );
 };

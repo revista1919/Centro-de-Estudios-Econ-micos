@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/centro-de-Estudios-Econ-micos/', 
+  base: '/Centro-de-Estudios-Econ-micos/', // Nombre correcto del repo
 })
