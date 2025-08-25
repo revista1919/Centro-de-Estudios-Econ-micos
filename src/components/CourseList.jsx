@@ -1,73 +1,66 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import { loadCSV } from '../services/csvLoader.js';
-import ReactPlayer from 'react-player';
 
 const CourseCard = ({ course, onClick }) => (
   <div className="border p-4 cursor-pointer hover:bg-gray-100" onClick={onClick}>
     <h3 className="text-lg font-bold">{course['Curso']}</h3>
-    <p>{course['Descripción']}</p>
+    <p>{course['Descripción'].slice(0, 100)}...</p>
     <p className="text-sm text-gray-600">Embárcate en este curso apasionante y transforma tu visión económica.</p>
   </div>
 );
-
-const CourseDetail = ({ course, onClose }) => {
-  const [modules, setModules] = useState([]);
-
-  useEffect(() => {
-    loadCSV('modules').then(data => {
-      const filtered = data.filter(m => m['Curso'] === course['Curso']).sort((a, b) => a['Número de Módulo'] - b['Número de Módulo']);
-      setModules(filtered);
-    });
-  }, [course]);
-
-  return (
-    <div className="modal">
-      <div className="modal-content">
-        <button onClick={onClose}>Cerrar</button>
-        <h1 className="text-2xl font-bold">{course['Curso']}</h1>
-        <p>{course['Descripción']}</p>
-        {modules.map(m => (
-          <div key={m['Número de Módulo']} className="mt-4">
-            <h3>{m['Descripción de Módulo']}</h3>
-            <ReactPlayer url={m['Link (Youtube)']} controls width="100%" />
-            <button onClick={() => window.open(m['Link (Youtube)'], '_blank')}>Abrir en YouTube</button>
-            {m['Formulario de Módulo'] && <a href={m['Formulario de Módulo']} target="_blank" className="ml-2">Formulario</a>}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const CourseList = ({ school }) => {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(5);
-  const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadCSV('courses').then(data => {
-      const filtered = data.filter(c => c['Escuela'].split(';').map(s => s.trim()).includes(school));
-      setCourses(filtered);
-    });
+    setLoading(true);
+    loadCSV('courses')
+      .then(data => {
+        const filtered = data.filter(c => c['Escuela']?.split(';').map(s => s.trim().toLowerCase()).includes(school.toLowerCase()));
+        setCourses(filtered);
+        setError(null);
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, [school]);
 
-  const fuse = new Fuse(courses, { keys: ['Curso', 'Descripción', 'Tema'] });
+  const fuse = new Fuse(courses, { keys: ['Curso', 'Descripción', 'Tema'], threshold: 0.3 });
   const results = search ? fuse.search(search).map(r => r.item) : courses;
   const showResults = results.slice(0, visible);
 
+  if (loading) return <p>Cargando cursos...</p>;
+  if (error) return <p>Error al cargar cursos: {error}. Por favor, intenta de nuevo más tarde.</p>;
+  if (courses.length === 0) return <p>No hay cursos disponibles para esta escuela.</p>;
+
   return (
     <div>
-      <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por curso, tema..." className="mb-4 block w-full p-2 border" />
-      <div className="grid gap-4">
-        {showResults.map(c => <CourseCard key={c['Curso']} course={c} onClick={() => setSelected(c)} />)}
+      <input
+        type="text"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Buscar por curso, tema..."
+        className="mb-4 block w-full p-2 border rounded"
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {showResults.map(c => (
+          <CourseCard
+            key={c['Curso']}
+            course={c}
+            onClick={() => navigate(`/${school}/courses/${encodeURIComponent(c['Curso'])}`)}
+          />
+        ))}
       </div>
       <div className="mt-4">
-        {visible < results.length && <button onClick={() => setVisible(v => v + 5)} className="mr-2">Mostrar más</button>}
-        {visible > 5 && <button onClick={() => setVisible(5)}>Mostrar menos</button>}
+        {visible < results.length && <button onClick={() => setVisible(v => v + 5)} className="mr-2 bg-blue-500 text-white p-2 rounded">Mostrar más</button>}
+        {visible > 5 && <button onClick={() => setVisible(5)} className="bg-gray-500 text-white p-2 rounded">Mostrar menos</button>}
       </div>
-      {selected && <CourseDetail course={selected} onClose={() => setSelected(null)} />}
     </div>
   );
 };
