@@ -5,9 +5,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write   # Necesario para poder desplegar a gh-pages
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,21 +23,26 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci   # Más robusto que `npm install`
 
       - name: Build project
         run: npm run build
         env:
-          VITE_BASE: /Centro-de-Estudios-Econ-micos/
+          VITE_BASE: /Centro-de-Estudios-Econ-micos/  # 👈 base path para Vite
 
       - name: Verify build output
-        run: test -d dist && echo "Build output exists" || exit 1
+        run: |
+          if [ ! -d dist ]; then
+            echo "❌ Build failed: dist folder not found"
+            exit 1
+          fi
+          echo "✅ Build output exists"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
           publish_branch: gh-pages
-          user_name: 'GitHub Actions'
-          user_email: 'actions@github.com'
+          publish_dir: ./dist
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
