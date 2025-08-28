@@ -151,18 +151,52 @@ const ArticleDetailPage = () => {
       .finally(() => setLoading(false));
   }, [title]);
 
-  const handleDownload = () => {
-    if (!article) return;
-    const element = document.getElementById('article-content');
-    const opt = {
-      margin: [10, 20, 10, 20],
-      filename: `${article['Título']}.pdf`,
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-    html2pdf().set(opt).from(element).save();
+const handleDownload = () => {
+  if (!article) return;
+  const element = document.getElementById('article-content');
+
+  // Creamos un clon para no alterar el DOM
+  const cloned = element.cloneNode(true);
+
+  // Aplicamos estilos profesionales para PDF
+  cloned.style.padding = '20px 25px';          // padding interno
+  cloned.style.border = '1px solid #333';     // borde visible
+  cloned.style.backgroundColor = 'white';     // fondo blanco
+  cloned.style.fontFamily = 'Times New Roman, serif';
+  cloned.style.fontSize = '12pt';
+  cloned.style.lineHeight = '1.5';
+  cloned.style.color = '#000';
+  cloned.style.boxSizing = 'border-box';
+  cloned.style.width = '100%';
+
+  // Numeración de página
+  const addPageNumbers = (doc) => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(`Página ${i} de ${pageCount}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+    }
   };
 
+  // Contenedor temporal
+  const container = document.createElement('div');
+  container.appendChild(cloned);
+  document.body.appendChild(container);
+
+  const opt = {
+    margin: [15, 15, 20, 15],       // top, left, bottom, right en mm
+    filename: `${article['Título']}.pdf`,
+    html2canvas: { scale: 2, scrollY: 0 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(cloned).toPdf().get('pdf').then(function (pdf) {
+    addPageNumbers(pdf);            // agregamos numeración
+  }).save().finally(() => {
+    document.body.removeChild(container);
+  });
+};
   const handleAuthorClick = () => {
     if (authorBio && authorBio['Biografía']) setShowBio(true);
     else alert('No hay datos de su descripción');
