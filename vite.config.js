@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Centro-de-Estudios-Econ-micos/', // Nombre correcto del repo
+  base: process.env.VITE_BASE || '/', // dinámico: GitHub Pages usa /Centro-de-Estudios-Econ-micos/, local usa /
 })
