@@ -2,11 +2,39 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import { loadCSV } from '../services/csvLoader.js';
-import formatDate from '../utils/formatDate.js';
+
+// Nueva función más robusta para fechas
+const safeFormatDate = (dateStr = '') => {
+  if (!dateStr) return 'n.d.';
+  let date;
+
+  // Intenta varios formatos
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    date = new Date(dateStr); // formato ISO YYYY-MM-DD
+  } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+    const [d, m, y] = dateStr.split('/');
+    date = new Date(`${y}-${m}-${d}`);
+  } else if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+    const [m, d, y] = dateStr.split('-');
+    date = new Date(`${y}-${m}-${d}`);
+  } else {
+    date = new Date(dateStr); // fallback
+  }
+
+  if (isNaN(date)) return dateStr; // si no parsea, devuelve original
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+};
 
 const parseText = (text = '') => {
+  // cursiva entre /.../
   text = text.replace(/\/([^/]+)\//g, '<i>$1</i>');
+  // negrita entre *...*
   text = text.replace(/\*([^*]+)\*/g, '<b>$1</b>');
+  // links
   text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
   return text;
 };
@@ -66,19 +94,21 @@ const parseReferences = (refs = '') => {
   );
 };
 
+// citas limpias, sin barras
 const generateCitation = (article, style) => {
-  const author = `${article['Apellido'] || ''}, ${article['Nombre'] || ''}`;
-  const year = formatDate(article['Fecha de publicación'] || '').split('/')[2] || 'n.d.';
+  const author = `${article['Apellido'] || ''}, ${article['Nombre'] || ''}`.trim();
+  const year = safeFormatDate(article['Fecha de publicación'] || '').split(' ')[2] || 'n.d.';
   const title = article['Título'] || '';
   const site = 'Centro de Pensamiento Económico';
+
   if (style === 'APA') {
-    return `${author} (${year}). /${title}/. ${site}.`;
+    return `${author} (${year}). <i>${title}</i>. ${site}.`;
   }
   if (style === 'Chicago') {
-    return `${author}. "${title}." ${site}, ${year}.`;
+    return `${author}. "<i>${title}</i>." ${site}, ${year}.`;
   }
   if (style === 'MLA') {
-    return `${author}. "${title}." ${site}, ${year}.`;
+    return `${author}. "<i>${title}</i>." ${site}, ${year}.`;
   }
 };
 
@@ -124,7 +154,13 @@ const ArticleDetailPage = () => {
   const handleDownload = () => {
     if (!article) return;
     const element = document.getElementById('article-content');
-    html2pdf().from(element).save(`${article['Título']}.pdf`);
+    const opt = {
+      margin: [10, 20, 10, 20],
+      filename: `${article['Título']}.pdf`,
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+    html2pdf().set(opt).from(element).save();
   };
 
   const handleAuthorClick = () => {
@@ -138,7 +174,7 @@ const ArticleDetailPage = () => {
 
   return (
     <div className="detail-page flex justify-center px-4">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-3xl border p-6 bg-white shadow-md">
         <button
           onClick={() => navigate(`/${school}`)}
           className="mb-4 bg-blue-500 text-white p-2 rounded"
@@ -159,7 +195,7 @@ const ArticleDetailPage = () => {
             </span>
           </p>
           <p className="text-center mb-6">
-            Publicado el {formatDate(article['Fecha de publicación'])}
+            Publicado el {safeFormatDate(article['Fecha de publicación'])}
           </p>
 
           {parseContent(article['Contenido'])}
