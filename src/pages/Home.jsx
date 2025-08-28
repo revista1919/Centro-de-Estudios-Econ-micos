@@ -3,7 +3,7 @@ import NewsletterForm from "../components/NewsletterForm.jsx";
 import SchoolCard from "../components/SchoolCard.jsx";
 import ArticleCard from "../components/ArticleCard.jsx";
 import { loadCSV } from "../services/csvLoader.js";
-import ArticleDetail from "../components/ArticleDetail.jsx"; // 👈 asegúrate de importarlo
+import ArticleDetail from "../components/ArticleDetail.jsx"; // 👈 si ya lo tienes
 
 const schoolData = [
   {
@@ -29,9 +29,9 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f1eb] text-[#3e2f2a]">
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <main className="container mx-auto px-4 sm:px-6 py-10">
         {/* Quiénes somos */}
-        <section className="mb-12 max-w-3xl mx-auto text-center px-2">
+        <section className="mb-12 max-w-3xl mx-auto text-center">
           <h2 className="text-xl sm:text-2xl font-serif font-semibold mb-4">
             Quiénes Somos
           </h2>
@@ -47,7 +47,7 @@ const Home = () => {
           <h2 className="text-xl sm:text-2xl font-serif font-semibold mb-6 border-b border-[#8c6a4c] pb-2">
             Escuelas Económicas
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {schoolData.map((s) => (
               <SchoolCard key={s.path} {...s} />
             ))}
@@ -59,7 +59,7 @@ const Home = () => {
           <h2 className="text-xl sm:text-2xl font-serif font-semibold mb-6 border-b border-[#8c6a4c] pb-2">
             Muestras de Artículos
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {samples.map((a) => (
               <ArticleCard
                 key={a["Título"]}
@@ -71,7 +71,7 @@ const Home = () => {
         </section>
 
         {/* Newsletter */}
-        <section className="mb-12 max-w-2xl mx-auto px-2">
+        <section className="mb-12 max-w-2xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-serif font-semibold mb-4 border-b border-[#8c6a4c] pb-2">
             Suscríbete a Nuestro Newsletter
           </h2>
@@ -83,7 +83,7 @@ const Home = () => {
         </section>
 
         {/* Subir artículo */}
-        <section className="mb-12 max-w-2xl mx-auto px-2">
+        <section className="mb-12 max-w-2xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-serif font-semibold mb-4 border-b border-[#8c6a4c] pb-2">
             Envío de Artículos para Revisión
           </h2>
@@ -108,7 +108,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Detalle artículo */}
         {selected && (
           <ArticleDetail
             article={selected}
